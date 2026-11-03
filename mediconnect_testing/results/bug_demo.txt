@@ -1,0 +1,329 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.3, pytest-8.3.4, pluggy-1.7.0 -- C:\Users\shahz\AppData\Local\Programs\Python\Python310\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.3', 'Platform': 'Windows-10-10.0.26100-SP0', 'Packages': {'pytest': '8.3.4', 'pluggy': '1.7.0'}, 'Plugins': {'anyio': '4.14.1', 'html': '4.2.0', 'metadata': '3.1.1', 'playwright': '0.10.0'}}
+rootdir: C:\Users\shahz\OneDrive\Desktop\Mediconnect\mediconnect_testing
+configfile: pytest.ini
+plugins: anyio-4.14.1, html-4.2.0, metadata-3.1.1, playwright-0.10.0
+collecting ... collected 13 items
+
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserLanding::test_landing_page_loads[chromium] PASSED [  7%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserLanding::test_landing_page_has_navbar[chromium] PASSED [ 15%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserLanding::test_landing_page_has_search[chromium] FAILED [ 23%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserLogin::test_login_page_renders[chromium] PASSED [ 30%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserLogin::test_login_page_has_submit_button[chromium] PASSED [ 38%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserNavigation::test_navigate_to_about[chromium] PASSED [ 46%]
+test_10_crossbrowser_and_bugs.py::TestCrossBrowserNavigation::test_navigate_to_hospitals[chromium] PASSED [ 53%]
+test_10_crossbrowser_and_bugs.py::TestRegexAssertions::test_title_matches_regex[chromium] PASSED [ 61%]
+test_10_crossbrowser_and_bugs.py::TestRegexAssertions::test_url_matches_regex[chromium] PASSED [ 69%]
+test_10_crossbrowser_and_bugs.py::TestRegexAssertions::test_heading_text_matches_regex[chromium] PASSED [ 76%]
+test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_title[chromium] FAILED [ 84%]
+test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_heading[chromium] FAILED [ 92%]
+test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_url[chromium] FAILED [100%]
+
+================================== FAILURES ===================================
+_______ TestCrossBrowserLanding.test_landing_page_has_search[chromium] ________
+test_10_crossbrowser_and_bugs.py:64: in test_landing_page_has_search
+    expect(search).to_be_visible()
+E   AssertionError: Locator expected to be visible
+E   Actual value: None
+E   Error: element(s) not found 
+E   Call log:
+E     - Expect "to_be_visible" locator("input[type=\"search\"], input[placeholder*=\"search\" i], input[placeholder*=\"Search\" i], input[placeholder*=\"doctor\" i]").first with timeout 15000ms
+E     - waiting for locator("input[type=\"search\"], input[placeholder*=\"search\" i], input[placeholder*=\"Search\" i], input[placeholder*=\"doctor\" i]").first
+E   
+E   Aria snapshot:
+E   - banner:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - navigation:
+E       - link "Home":
+E         - /url: /
+E       - link "Find Hospitals":
+E         - /url: /hospitals
+E       - link "About Us":
+E         - /url: /about
+E       - link "For Doctors":
+E         - /url: /doctor
+E     - link "Log in":
+E       - /url: /login
+E     - button "Sign up"
+E   - main:
+E     - text: No more asking around
+E     - heading "Find a doctor you can actually trust." [level=1]
+E     - paragraph: Real ratings, real reviews, from patients who actually completed their appointment. Book by token, no guessing games.
+E     - combobox:
+E       - option "Any city" [selected]
+E     - combobox:
+E       - option "Any specialization" [selected]
+E     - button "Search"
+E     - button "Not sure which specialist you need?"
+E     - paragraph: Your Token
+E     - paragraph: "07"
+E     - paragraph: Dr. Aftab Hussain
+E     - paragraph: Cardiologist · Aga Khan Hospital
+E     - text: 4.8 (112 reviews)
+E     - heading "Real reviews only" [level=3]
+E     - paragraph: Explore authentic patient reviews to find the doctor that's right for you.
+E     - heading "Verified healthcare professionals" [level=3]
+E     - paragraph: Every listed doctor is carefully verified before joining the platform.
+E     - heading "Easy token-based booking" [level=3]
+E     - paragraph: A familiar token system that makes booking quick and straightforward.
+E   - contentinfo:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - paragraph: Finding the right doctor, without asking around. Book verified doctors across Pakistan in a few taps.
+E     - link "support@mediconnect.com":
+E       - /url: mailto:support@mediconnect.com
+E     - paragraph: Karachi, Pakistan
+E     - navigation "For Patients":
+E       - heading "For Patients" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Find Hospitals":
+E             - /url: /hospitals
+E         - listitem:
+E           - link "Search Doctors":
+E             - /url: /search
+E         - listitem:
+E           - link "Create an account":
+E             - /url: /signup
+E         - listitem:
+E           - link "Patient Login":
+E             - /url: /login
+E     - navigation "For Doctors":
+E       - heading "For Doctors" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Doctor Portal":
+E             - /url: /doctor
+E         - listitem:
+E           - link "Join as a doctor":
+E             - /url: /doctor/signup
+E         - listitem:
+E           - link "Doctor Login":
+E             - /url: /doctor/login
+E     - navigation "Company":
+E       - heading "Company" [level=3]
+E       - list:
+E         - listitem:
+E           - link "About Us":
+E             - /url: /about
+E     - paragraph: © 2026 MediConnect. All rights reserved.
+E     - paragraph: Built for patients across Pakistan.
+______ TestIntentionalBugFailures.test_intentional_wrong_title[chromium] ______
+test_10_crossbrowser_and_bugs.py:158: in test_intentional_wrong_title
+    expect(page).to_have_title(
+E   AssertionError: Page title expected to be 'WrongTitle_BugDemo'
+E   Actual value: MediConnect 
+E   Call log:
+E     - Expect "to_have_title" with timeout 3000ms
+E       9 × locator resolved to <html lang="en">…</html>
+E         - unexpected value "MediConnect"
+E   
+E   Aria snapshot:
+E   - banner:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - navigation:
+E       - link "Home":
+E         - /url: /
+E       - link "Find Hospitals":
+E         - /url: /hospitals
+E       - link "About Us":
+E         - /url: /about
+E       - link "For Doctors":
+E         - /url: /doctor
+E     - link "Log in":
+E       - /url: /login
+E     - button "Sign up"
+E   - main:
+E     - text: No more asking around
+E     - heading "Find a doctor you can actually trust." [level=1]
+E     - paragraph: Real ratings, real reviews, from patients who actually completed their appointment. Book by token, no guessing games.
+E     - combobox:
+E       - option "Any city" [selected]
+E     - combobox:
+E       - option "Any specialization" [selected]
+E     - button "Search"
+E     - button "Not sure which specialist you need?"
+E     - paragraph: Your Token
+E     - paragraph: "07"
+E     - paragraph: Dr. Aftab Hussain
+E     - paragraph: Cardiologist · Aga Khan Hospital
+E     - text: 4.8 (112 reviews)
+E     - heading "Real reviews only" [level=3]
+E     - paragraph: Explore authentic patient reviews to find the doctor that's right for you.
+E     - heading "Verified healthcare professionals" [level=3]
+E     - paragraph: Every listed doctor is carefully verified before joining the platform.
+E     - heading "Easy token-based booking" [level=3]
+E     - paragraph: A familiar token system that makes booking quick and straightforward.
+E   - contentinfo:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - paragraph: Finding the right doctor, without asking around. Book verified doctors across Pakistan in a few taps.
+E     - link "support@mediconnect.com":
+E       - /url: mailto:support@mediconnect.com
+E     - paragraph: Karachi, Pakistan
+E     - navigation "For Patients":
+E       - heading "For Patients" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Find Hospitals":
+E             - /url: /hospitals
+E         - listitem:
+E           - link "Search Doctors":
+E             - /url: /search
+E         - listitem:
+E           - link "Create an account":
+E             - /url: /signup
+E         - listitem:
+E           - link "Patient Login":
+E             - /url: /login
+E     - navigation "For Doctors":
+E       - heading "For Doctors" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Doctor Portal":
+E             - /url: /doctor
+E         - listitem:
+E           - link "Join as a doctor":
+E             - /url: /doctor/signup
+E         - listitem:
+E           - link "Doctor Login":
+E             - /url: /doctor/login
+E     - navigation "Company":
+E       - heading "Company" [level=3]
+E       - list:
+E         - listitem:
+E           - link "About Us":
+E             - /url: /about
+E     - paragraph: © 2026 MediConnect. All rights reserved.
+E     - paragraph: Built for patients across Pakistan.
+_____ TestIntentionalBugFailures.test_intentional_wrong_heading[chromium] _____
+test_10_crossbrowser_and_bugs.py:172: in test_intentional_wrong_heading
+    expect(heading).to_have_text(
+E   AssertionError: Locator expected to have text 'This heading does not exist - BUG DEMO'
+E   Actual value: Find a doctor you can actually trust. 
+E   Call log:
+E     - Expect "to_have_text" locator("h1").first with timeout 3000ms
+E     - waiting for locator("h1").first
+E       10 × locator resolved to <h1 class="mt-5 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">Find a doctor you can actually trust.</h1>
+E          - unexpected value "Find a doctor you can actually trust."
+E   
+E   Aria snapshot:
+E   - heading "Find a doctor you can actually trust." [level=1]
+_______ TestIntentionalBugFailures.test_intentional_wrong_url[chromium] _______
+test_10_crossbrowser_and_bugs.py:185: in test_intentional_wrong_url
+    expect(page).to_have_url(
+E   AssertionError: Page URL expected to be 'http://localhost:5173/dashboard'
+E   Actual value: http://localhost:5173/login 
+E   Call log:
+E     - Expect "to_have_url" with timeout 3000ms
+E       9 × locator resolved to <html lang="en">…</html>
+E         - unexpected value "http://localhost:5173/login"
+E   
+E   Aria snapshot:
+E   - banner:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - navigation:
+E       - link "Home":
+E         - /url: /
+E       - link "Find Hospitals":
+E         - /url: /hospitals
+E       - link "About Us":
+E         - /url: /about
+E       - link "For Doctors":
+E         - /url: /doctor
+E     - link "Log in":
+E       - /url: /login
+E     - button "Sign up"
+E   - main:
+E     - heading "Welcome back" [level=1]
+E     - paragraph: Log in to book and manage your appointments.
+E     - text: Email
+E     - textbox "Email":
+E       - /placeholder: you@example.com
+E     - text: Password
+E     - textbox "Password":
+E       - /placeholder: Your password
+E     - button "Show password"
+E     - link "Forgot password?":
+E       - /url: /forgot-password
+E     - button "Log in"
+E     - link "Are you a doctor? Use the doctor portal":
+E       - /url: /doctor/login
+E     - text: New here?
+E     - link "Create an account":
+E       - /url: /signup
+E     - complementary:
+E       - text: Patient access
+E       - heading "Your care, without the guesswork." [level=2]
+E       - paragraph: Log in to book verified doctors, follow your token in real time, and keep every appointment in one place.
+E       - list:
+E         - listitem:
+E           - paragraph: Token-based booking
+E           - paragraph: See where you are in the queue before you leave the house.
+E         - listitem:
+E           - paragraph: Reviews you can trust
+E           - paragraph: Only patients who completed a visit can rate a doctor.
+E         - listitem:
+E           - paragraph: Verified doctors
+E           - paragraph: Every doctor is checked and approved before being listed.
+E       - paragraph: Your details are only used to manage your appointments.
+E   - contentinfo:
+E     - link "MediConnect home":
+E       - /url: /
+E       - text: MediConnect PK
+E     - paragraph: Finding the right doctor, without asking around. Book verified doctors across Pakistan in a few taps.
+E     - link "support@mediconnect.com":
+E       - /url: mailto:support@mediconnect.com
+E     - paragraph: Karachi, Pakistan
+E     - navigation "For Patients":
+E       - heading "For Patients" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Find Hospitals":
+E             - /url: /hospitals
+E         - listitem:
+E           - link "Search Doctors":
+E             - /url: /search
+E         - listitem:
+E           - link "Create an account":
+E             - /url: /signup
+E         - listitem:
+E           - link "Patient Login":
+E             - /url: /login
+E     - navigation "For Doctors":
+E       - heading "For Doctors" [level=3]
+E       - list:
+E         - listitem:
+E           - link "Doctor Portal":
+E             - /url: /doctor
+E         - listitem:
+E           - link "Join as a doctor":
+E             - /url: /doctor/signup
+E         - listitem:
+E           - link "Doctor Login":
+E             - /url: /doctor/login
+E     - navigation "Company":
+E       - heading "Company" [level=3]
+E       - list:
+E         - listitem:
+E           - link "About Us":
+E             - /url: /about
+E     - paragraph: © 2026 MediConnect. All rights reserved.
+E     - paragraph: Built for patients across Pakistan.
+- Generated html report: file:///C:/Users/shahz/OneDrive/Desktop/Mediconnect/mediconnect_testing/test_report.html -
+=========================== short test summary info ===========================
+FAILED test_10_crossbrowser_and_bugs.py::TestCrossBrowserLanding::test_landing_page_has_search[chromium]
+FAILED test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_title[chromium]
+FAILED test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_heading[chromium]
+FAILED test_10_crossbrowser_and_bugs.py::TestIntentionalBugFailures::test_intentional_wrong_url[chromium]
+======================== 4 failed, 9 passed in 44.65s =========================

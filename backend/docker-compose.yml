@@ -6,13 +6,13 @@ services:
     container_name: medibook-db
     restart: always
     environment:
-      POSTGRES_DB: medibook
-      POSTGRES_USER: medibook_user
-      POSTGRES_PASSWORD: medibook_pass
+      POSTGRES_DB: mediconnect
+      POSTGRES_USER: internship_user
+      POSTGRES_PASSWORD: internship_pass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - medibook_data:/var/lib/postgresql/data
+      - mediconnect_data:/var/lib/postgresql/data
 
   adminer:
     image: adminer
@@ -22,4 +22,4 @@ services:
       - "8080:8080"
 
 volumes:
-  medibook_data:
+  mediconnect_data:
