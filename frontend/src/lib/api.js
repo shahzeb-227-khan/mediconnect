@@ -6,6 +6,12 @@ export const api = axios.create({
   baseURL: BASE_URL,
 });
 
+export function extractList(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.items)) return data.items;
+  return [];
+}
+
 // Attach the right bearer token depending on which portal is making the call.
 // Each portal (patient / doctor / admin) stores its own token under its own key,
 // since a person could theoretically be logged into more than one role's flow

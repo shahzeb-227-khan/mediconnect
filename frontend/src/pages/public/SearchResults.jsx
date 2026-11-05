@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { api } from "../../lib/api";
+import { api, extractList } from "../../lib/api";
 import DoctorCard from "../../components/DoctorCard";
 import { Select, Spinner, Button } from "../../components/ui";
 import { usePageTitle } from "../../lib/usePageTitle";
@@ -21,8 +21,11 @@ export default function SearchResults() {
   const skip = parseInt(searchParams.get("skip") || "0", 10);
 
   useEffect(() => {
-    api.get("/cities").then((res) => setCities(res.data)).catch(() => {});
-    api.get("/specializations").then((res) => setSpecializations(res.data)).catch(() => {});
+    api.get("/cities").then((res) => setCities(extractList(res.data))).catch(() => setCities([]));
+    api
+      .get("/specializations")
+      .then((res) => setSpecializations(extractList(res.data)))
+      .catch(() => setSpecializations([]));
   }, []);
 
   useEffect(() => {

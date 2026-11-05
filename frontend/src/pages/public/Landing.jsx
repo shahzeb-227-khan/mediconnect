@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageTitle } from "../../lib/usePageTitle";
 import { Search, ShieldCheck, Ticket, Star, Sparkles } from "lucide-react";
-import { api } from "../../lib/api";
+import { api, extractList } from "../../lib/api";
 import { Button, Select, TextArea, Alert } from "../../components/ui";
 
 export default function Landing() {
@@ -14,8 +14,11 @@ export default function Landing() {
   const [specializationId, setSpecializationId] = useState("");
 
   useEffect(() => {
-    api.get("/cities").then((res) => setCities(res.data)).catch(() => {});
-    api.get("/specializations").then((res) => setSpecializations(res.data)).catch(() => {});
+    api.get("/cities").then((res) => setCities(extractList(res.data))).catch(() => setCities([]));
+    api
+      .get("/specializations")
+      .then((res) => setSpecializations(extractList(res.data)))
+      .catch(() => setSpecializations([]));
   }, []);
 
   function handleSearch(e) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDoctorAuth } from "../../context/DoctorAuthContext";
-import { api, extractErrorMessage } from "../../lib/api";
+import { api, extractList, extractErrorMessage } from "../../lib/api";
 import { Button, Input, Select, TextArea, Alert } from "../../components/ui";
 import { usePageTitle } from "../../lib/usePageTitle";
 
@@ -23,7 +23,10 @@ export default function DoctorSignup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.get("/specializations").then((res) => setSpecializations(res.data)).catch(() => {});
+    api
+      .get("/specializations")
+      .then((res) => setSpecializations(extractList(res.data)))
+      .catch(() => setSpecializations([]));
   }, []);
 
   async function handleSubmit(e) {
