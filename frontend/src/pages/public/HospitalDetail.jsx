@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { usePageTitle } from "../../lib/usePageTitle";
 import { MapPin, Search } from "lucide-react";
-import { api } from "../../lib/api";
+import { api, extractList } from "../../lib/api";
 import DoctorCard from "../../components/DoctorCard";
 import { Select, Input, Spinner } from "../../components/ui";
 
@@ -19,7 +19,10 @@ const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     api.get(`/hospitals/${hospitalId}`).then((res) => setHospital(res.data)).catch(() => {});
-    api.get("/specializations").then((res) => setSpecializations(res.data)).catch(() => {});
+    api
+      .get("/specializations")
+      .then((res) => setSpecializations(extractList(res.data)))
+      .catch(() => setSpecializations([]));
   }, [hospitalId]);
 
   useEffect(() => {
@@ -28,7 +31,8 @@ const [nameQuery, setNameQuery] = useState("");
     if (specializationId) params.specialization_id = specializationId;
     api
       .get(`/hospitals/${hospitalId}/doctors`, { params })
-      .then((res) => setDoctors(res.data.items))
+      .then((res) => setDoctors(extractList(res.data)))
+      .catch(() => setDoctors([]))
       .finally(() => setLoading(false));
   }, [hospitalId, specializationId]);
 

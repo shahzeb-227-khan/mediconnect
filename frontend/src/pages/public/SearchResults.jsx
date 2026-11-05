@@ -37,8 +37,12 @@ export default function SearchResults() {
     api
       .get("/doctors/search", { params })
       .then((res) => {
-        setResults(res.data.items);
-        setTotal(res.data.total);
+        setResults(extractList(res.data));
+        setTotal(typeof res.data?.total === "number" ? res.data.total : 0);
+      })
+      .catch(() => {
+        setResults([]);
+        setTotal(0);
       })
       .finally(() => setLoading(false));
   }, [cityId, specializationId, skip]);

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "../../lib/usePageTitle";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
-import { api } from "../../lib/api";
+import { api, extractList } from "../../lib/api";
 import HospitalCard from "../../components/HospitalCard";
 import { Select, Spinner, Button } from "../../components/ui";
 
@@ -21,7 +21,7 @@ export default function HospitalsList() {
   const skip = parseInt(searchParams.get("skip") || "0", 10);
 
   useEffect(() => {
-    api.get("/cities").then((res) => setCities(res.data)).catch(() => {});
+    api.get("/cities").then((res) => setCities(extractList(res.data))).catch(() => setCities([]));
   }, []);
 
   useEffect(() => {
@@ -33,8 +33,12 @@ export default function HospitalsList() {
     api
       .get("/hospitals", { params })
       .then((res) => {
-        setHospitals(res.data.items);
-        setTotal(res.data.total);
+        setHospitals(extractList(res.data));
+        setTotal(typeof res.data?.total === "number" ? res.data.total : 0);
+      })
+      .catch(() => {
+        setHospitals([]);
+        setTotal(0);
       })
       .finally(() => setLoading(false));
   }, [cityId, skip, searchParams]);
