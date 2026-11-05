@@ -70,6 +70,10 @@ jobs:
             --query taskDefinition > backend-task-definition.json
           jq --arg image "$IMAGE" \
             '.containerDefinitions[0].image = $image |
+             .containerDefinitions[0].environment =
+               ((.containerDefinitions[0].environment // [])
+                | map(select(.name != "EMAIL_VERIFICATION_ENABLED"))
+                + [{"name": "EMAIL_VERIFICATION_ENABLED", "value": "false"}]) |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
                  .compatibilities, .registeredAt, .registeredBy)' \
             backend-task-definition.json > backend-task-definition-rendered.json

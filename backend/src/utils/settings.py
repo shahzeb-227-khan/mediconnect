@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     MAIL_FROM_NAME: str
     ORIGIN_URL: str
     CORS_ORIGINS: str | None = None
+    EMAIL_VERIFICATION_ENABLED: bool = True
 
     CLOUDINARY_CLOUD_NAME: str
     CLOUDINARY_API_KEY: str

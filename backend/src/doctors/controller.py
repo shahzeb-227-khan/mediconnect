@@ -16,6 +16,7 @@ from src.utils.helpers import (
     decode_email_token,
     normalize_doctor_name,
 )
+from src.utils.settings import settings
 from src.utils.mails import send_verification_email, send_password_reset_email
 from src.utils.cloudinary import upload_file_to_cloudinary
 
@@ -39,14 +40,15 @@ def signup_doctor(signup_data: DoctorSignup, background_tasks: BackgroundTasks, 
         qualifications=signup_data.qualifications,
         experience_years=signup_data.experience_years,
         bio=signup_data.bio,
-        is_verified=False,
+        is_verified=not settings.EMAIL_VERIFICATION_ENABLED,
     )
     db.add(doctor)
     db.commit()
     db.refresh(doctor)
 
-    verification_token = create_email_token({"doctor_id": doctor.id}, purpose="verify")
-    background_tasks.add_task(send_verification_email, doctor.email, verification_token, "doctor")
+    if settings.EMAIL_VERIFICATION_ENABLED:
+        verification_token = create_email_token({"doctor_id": doctor.id}, purpose="verify")
+        background_tasks.add_task(send_verification_email, doctor.email, verification_token, "doctor")
 
     return doctor
 

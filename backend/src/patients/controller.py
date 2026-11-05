@@ -19,6 +19,7 @@ from src.utils.helpers import (
     create_email_token,
     decode_email_token,
 )
+from src.utils.settings import settings
 from src.utils.mails import send_verification_email, send_password_reset_email, send_email_change_verification
 
 
@@ -32,14 +33,15 @@ def signup_patient(signup_data: PatientSignup, background_tasks: BackgroundTasks
         hashed_password=hash_password(signup_data.password),
         name=signup_data.name,
         phone_number=signup_data.phone_number,
-        is_verified=False,
+        is_verified=not settings.EMAIL_VERIFICATION_ENABLED,
     )
     db.add(patient)
     db.commit()
     db.refresh(patient)
 
-    verification_token = create_email_token({"patient_id": patient.id}, purpose="verify")
-    background_tasks.add_task(send_verification_email, patient.email, verification_token, "patient")
+    if settings.EMAIL_VERIFICATION_ENABLED:
+        verification_token = create_email_token({"patient_id": patient.id}, purpose="verify")
+        background_tasks.add_task(send_verification_email, patient.email, verification_token, "patient")
 
     return patient
 
