@@ -204,7 +204,7 @@ resource "aws_ecs_task_definition" "backend" {
     environment = [
       { name = "DB_HOST", value = aws_db_instance.main.address },
       { name = "DB_PORT", value = "5432" },
-      { name = "ORIGIN_URL", value = "http://localhost" }
+      { name = "ORIGIN_URL", value = "http://${aws_lb.main.dns_name}" }
     ]
     secrets = concat([
       for key in [
