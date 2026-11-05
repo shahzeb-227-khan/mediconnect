@@ -1,0 +1,114 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REGISTRY: 410567493647.dkr.ecr.ap-south-1.amazonaws.com
+  ECS_CLUSTER: mediconnect-cea-cluster
+  FRONTEND_SERVICE: mediconnect-cea-frontend
+  BACKEND_SERVICE: mediconnect-cea-backend
+  FRONTEND_TASK_FAMILY: mediconnect-cea-frontend
+  BACKEND_TASK_FAMILY: mediconnect-cea-backend
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Frontend lint and build
+        working-directory: frontend
+        run: |
+          npm install --no-audit --no-fund
+          npm run lint
+          npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Backend compile check
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          python -m compileall -q src main.py
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push images
+        run: |
+          docker build -t "$ECR_REGISTRY/mediconnect-backend:$GITHUB_SHA" backend
+          docker build -t "$ECR_REGISTRY/mediconnect-frontend:$GITHUB_SHA" \
+            --build-arg VITE_API_BASE_URL=/api frontend
+          docker push "$ECR_REGISTRY/mediconnect-backend:$GITHUB_SHA"
+          docker push "$ECR_REGISTRY/mediconnect-frontend:$GITHUB_SHA"
+      - name: Deploy backend
+        env:
+          IMAGE: ${{ env.ECR_REGISTRY }}/mediconnect-backend:${{ github.sha }}
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition "$BACKEND_TASK_FAMILY" \
+            --query taskDefinition > backend-task-definition.json
+          jq --arg image "$IMAGE" \
+            '.containerDefinitions[0].image = $image |
+             del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+                 .compatibilities, .registeredAt, .registeredBy)' \
+            backend-task-definition.json > backend-task-definition-rendered.json
+          aws ecs register-task-definition \
+            --cli-input-json file://backend-task-definition-rendered.json > backend-registered.json
+          BACKEND_TASK_ARN=$(jq -r '.taskDefinition.taskDefinitionArn' backend-registered.json)
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$BACKEND_SERVICE" \
+            --task-definition "$BACKEND_TASK_ARN" \
+            --force-new-deployment
+      - name: Deploy frontend
+        env:
+          IMAGE: ${{ env.ECR_REGISTRY }}/mediconnect-frontend:${{ github.sha }}
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition "$FRONTEND_TASK_FAMILY" \
+            --query taskDefinition > frontend-task-definition.json
+          jq --arg image "$IMAGE" \
+            '.containerDefinitions[0].image = $image |
+             del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+                 .compatibilities, .registeredAt, .registeredBy)' \
+            frontend-task-definition.json > frontend-task-definition-rendered.json
+          aws ecs register-task-definition \
+            --cli-input-json file://frontend-task-definition-rendered.json > frontend-registered.json
+          FRONTEND_TASK_ARN=$(jq -r '.taskDefinition.taskDefinitionArn' frontend-registered.json)
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$FRONTEND_SERVICE" \
+            --task-definition "$FRONTEND_TASK_ARN" \
+            --force-new-deployment
+      - name: Wait for ECS services
+        run: |
+          aws ecs wait services-stable --cluster "$ECS_CLUSTER" \
+            --services "$BACKEND_SERVICE" "$FRONTEND_SERVICE"
+      - name: Verify deployed application
+        run: |
+          ALB_DNS=$(aws elbv2 describe-load-balancers \
+            --names mediconnect-cea-alb \
+            --query 'LoadBalancers[0].DNSName' \
+            --output text)
+          curl --fail --retry 5 --retry-delay 10 "http://$ALB_DNS/api/health"
