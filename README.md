@@ -98,6 +98,16 @@ See `backend/.env.example` for the full list of required variables (database, JW
 
 The admin portal has no public link in the UI by design — log in directly at `/admin/login` using the credentials set in `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 
+## CEA Deliverables
+
+- [Technical report](docs/reports/MediConnect_CEA_Technical_Report.pdf)
+- [Screenshot evidence](docs/evidence/MediConnect_CEA_Screenshot_Evidence.docx)
+- [Architecture diagram](docs/architecture/MediConnect_Architecture.png)
+- [Infrastructure and CI/CD source](infrastructure/README.md)
+
+The deployed application uses AWS resources provisioned by Terraform. Do not commit
+`.env` files, Terraform state/plan files, credentials, or API keys.
+
 ## License
 
 Private project — all rights reserved.
