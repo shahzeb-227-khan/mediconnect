@@ -41,6 +41,20 @@ logger = logging.getLogger("mediconnect")
 
 app = FastAPI(title="MediConnect")
 
+
+@app.on_event("startup")
+def auto_verify_existing_users():
+    """When email verification is disabled (demo env), unblock accounts created earlier."""
+    if settings.EMAIL_VERIFICATION_ENABLED:
+        return
+    try:
+        with engine.begin() as connection:
+            connection.execute(text("UPDATE patients SET is_verified = TRUE WHERE is_verified = FALSE"))
+            connection.execute(text("UPDATE doctors SET is_verified = TRUE WHERE is_verified = FALSE"))
+        logger.info("Email verification disabled: existing accounts marked verified")
+    except SQLAlchemyError:
+        logger.exception("Could not auto-verify existing accounts")
+
 cors_origins = [settings.ORIGIN_URL]
 if settings.CORS_ORIGINS:
     cors_origins.extend(
