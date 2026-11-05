@@ -1,11 +1,15 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from src.utils.settings import settings
 
-from src.utils.database import Base, engine
+from src.utils.database import engine
 from src.utils.limiter import limiter
 
 from src.cities.models import City
@@ -29,21 +33,25 @@ from src.specializations.router import specializations_router
 from src.ai.router import ai_router
 from src.assistant.router import assistant_router
 
-Base.metadata.create_all(bind=engine)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logger = logging.getLogger("mediconnect")
 
 app = FastAPI(title="MediConnect")
 
-# @app.exception_handler(Exception)
-# async def global_exception_handler(request: Request, exc: Exception):
-#     return JSONResponse(
-#         status_code=500,
-#         content={"detail": "An unexpected error occurred. Please try again later."},
-#     )
+cors_origins = [settings.ORIGIN_URL]
+if settings.CORS_ORIGINS:
+    cors_origins.extend(
+        origin.strip()
+        for origin in settings.CORS_ORIGINS.split(",")
+        if origin.strip()
+    )
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    import traceback
-    traceback.print_exc()
+    logger.exception("Unhandled exception while processing %s", request.url.path)
     return JSONResponse(
         status_code=500,
         content={"detail": "An unexpected error occurred. Please try again later."},
@@ -51,7 +59,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.ORIGIN_URL],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -73,7 +81,26 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
-
 @app.get("/")
 async def read_root():
     return {"status": "MediConnect API is running"}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
+@app.get("/health/db")
+async def database_health_check():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except SQLAlchemyError:
+        logger.exception("Database health check failed")
+        return JSONResponse(
+            status_code=503,
+            content={"status": "error", "detail": "Database is unavailable"},
+        )
+
+    return {"status": "ok"}

@@ -76,6 +76,20 @@ npm run dev
 
 Frontend runs at `http://localhost:5173`.
 
+### Containerized Full-Stack Setup
+
+The root `docker-compose.yml` runs PostgreSQL, the FastAPI backend, and the
+Nginx-served React frontend together. Create `backend/.env` from
+`backend/.env.example` first, then run:
+
+```bash
+docker compose up --build
+```
+
+Open the frontend at `http://localhost:8082`. Nginx serves the React SPA and
+proxies `/api/` requests to the backend container. The database is available
+only inside the Compose network; it is not exposed on a host port.
+
 ### Environment Variables
 
 See `backend/.env.example` for the full list of required variables (database, JWT secret, admin credentials, Stripe keys, Cloudinary credentials, mail settings).

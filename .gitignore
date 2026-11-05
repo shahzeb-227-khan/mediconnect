@@ -5,6 +5,11 @@ __pycache__/
 venv/
 *.egg-info/
 .env
+terraform.tfvars
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
 
 # Node / frontend
 node_modules/

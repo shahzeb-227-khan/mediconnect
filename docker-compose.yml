@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mediconnect
+      POSTGRES_USER: internship_user
+      POSTGRES_PASSWORD: internship_pass
+    volumes:
+      - mediconnect_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U internship_user -d mediconnect"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mediconnect
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://internship_user:internship_pass@db:5432/mediconnect
+      ORIGIN_URL: http://localhost:8082
+      CORS_ORIGINS: http://localhost:5173,http://localhost:5175
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command:
+      - sh
+      - -c
+      - alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
+    networks:
+      mediconnect:
+        aliases:
+          - backend.mediconnect.local
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: /api
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8082:80"
+    networks:
+      - mediconnect
+
+  adminer:
+    image: adminer
+    profiles: ["dev"]
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - mediconnect
+
+networks:
+  mediconnect:
+
+volumes:
+  mediconnect_data:
+    external: true
+    name: backend_mediconnect_data
