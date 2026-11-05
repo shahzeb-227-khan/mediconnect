@@ -18,7 +18,7 @@ resource "aws_iam_role" "github_deploy" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:shahzeb-227-khan/mediconnect:*"
+          "token.actions.githubusercontent.com:sub" = "repo:shahzeb-227-khan@155228355/mediconnect@1444542191:*"
         }
       }
     }]
