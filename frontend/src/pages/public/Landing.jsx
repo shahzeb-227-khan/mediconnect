@@ -63,10 +63,10 @@ export default function Landing() {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <span className="token-number inline-block rounded-full bg-marigold-light px-3 py-1 text-xs font-semibold text-marigold-dark">
-              No more asking around
+              No more asking around for best doctor
             </span>
             <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
-              Find a doctor you can actually trust pushed through ci cd pipelien.
+              Find a doctor you can actually trust.
             </h1>
             <p className="mt-4 max-w-md text-slate">
               Real ratings, real reviews, from patients who actually completed their appointment.
