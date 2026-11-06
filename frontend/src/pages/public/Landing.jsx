@@ -66,7 +66,7 @@ export default function Landing() {
               No more asking around
             </span>
             <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
-              Find a doctor you can actually trust.
+              Find a doctor you can actually trust pushed through ci cd pipelien.
             </h1>
             <p className="mt-4 max-w-md text-slate">
               Real ratings, real reviews, from patients who actually completed their appointment.
