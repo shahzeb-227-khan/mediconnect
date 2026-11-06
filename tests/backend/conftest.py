@@ -29,11 +29,11 @@ os.environ.update(
         "JWT_SECRET_KEY": "test-secret-key-used-only-in-automated-tests",
         "JWT_ALGORITHM": "HS256",
         "ACCESS_TOKEN_EXPIRE_MINUTES": "30",
-        "ADMIN_EMAIL": "admin@test.local",
+        "ADMIN_EMAIL": "admin@mediconnect-demo.com",
         "ADMIN_PASSWORD": "AdminPass123",
         "MAIL_USERNAME": "test",
         "MAIL_PASSWORD": "test",
-        "MAIL_FROM": "noreply@test.local",
+        "MAIL_FROM": "noreply@mediconnect-demo.com",
         "MAIL_PORT": "587",
         "MAIL_SERVER": "localhost",
         "MAIL_FROM_NAME": "MediConnect Tests",
@@ -106,7 +106,7 @@ def admin_headers(client):
 
 @pytest.fixture()
 def patient_headers(client, no_email):
-    payload = {"email": "ali@test.local", "password": "Strong123", "name": "Ali"}
+    payload = {"email": "ali@mediconnect-demo.com", "password": "Strong123", "name": "Ali"}
     assert client.post("/patients/signup", json=payload).status_code == 200
     login = client.post("/patients/login", json={"email": payload["email"], "password": payload["password"]})
     assert login.status_code == 200

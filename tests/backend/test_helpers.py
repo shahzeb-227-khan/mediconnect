@@ -1,5 +1,5 @@
 """Unit tests for authentication and utility helpers (no HTTP, no database rows)."""
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, timezone
 
 import jwt
 import pytest
@@ -40,7 +40,7 @@ def test_garbage_token_is_rejected():
 
 def test_expired_token_is_rejected():
     expired = jwt.encode(
-        {"role": "patient", "exp": datetime.now() - timedelta(minutes=5)},
+        {"role": "patient", "exp": datetime.now(timezone.utc) - timedelta(minutes=5)},
         settings.JWT_SECRET_KEY,
         algorithm=settings.JWT_ALGORITHM,
     )

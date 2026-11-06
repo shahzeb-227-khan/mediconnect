@@ -1,5 +1,5 @@
 """Patient registration, login and protected routes, against the real database."""
-SIGNUP = {"email": "ali@test.local", "password": "Strong123", "name": "Ali", "phone_number": "0300"}
+SIGNUP = {"email": "ali@mediconnect-demo.com", "password": "Strong123", "name": "Ali", "phone_number": "0300"}
 
 
 def test_signup_creates_verified_account_when_verification_is_off(client, no_email):
@@ -41,7 +41,7 @@ def test_wrong_password_is_unauthorized(client, no_email):
 
 
 def test_unknown_email_is_unauthorized(client):
-    response = client.post("/patients/login", json={"email": "nobody@test.local", "password": "Strong123"})
+    response = client.post("/patients/login", json={"email": "nobody@mediconnect-demo.com", "password": "Strong123"})
     assert response.status_code == 401
 
 
@@ -72,6 +72,6 @@ def test_profile_with_invalid_token_is_unauthorized(client):
 
 
 def test_forgot_password_does_not_reveal_whether_email_exists(client, no_email):
-    response = client.post("/patients/forgot-password", json={"email": "nobody@test.local"})
+    response = client.post("/patients/forgot-password", json={"email": "nobody@mediconnect-demo.com"})
     assert response.status_code == 200
     assert "reset link" in response.json()["message"]

@@ -5,12 +5,12 @@ from pydantic import ValidationError
 from src.patients.dtos import PatientSignup
 
 
-def make(password="Strong123", email="a@test.local"):
+def make(password="Strong123", email="a@mediconnect-demo.com"):
     return PatientSignup(email=email, password=password, name="Ali")
 
 
 def test_valid_signup_is_accepted():
-    assert make().email == "a@test.local"
+    assert make().email == "a@mediconnect-demo.com"
 
 
 @pytest.mark.parametrize("password", ["Short1", "nouppercase1", "NoNumberHere"])

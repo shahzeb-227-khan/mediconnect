@@ -9,13 +9,13 @@ def test_catalogue_is_empty_at_start(client):
 
 
 def test_admin_login_succeeds_with_configured_credentials(client):
-    response = client.post("/admin/login", json={"email": "admin@test.local", "password": "AdminPass123"})
+    response = client.post("/admin/login", json={"email": "admin@mediconnect-demo.com", "password": "AdminPass123"})
     assert response.status_code == 200
     assert response.json()["access_token"]
 
 
 def test_admin_login_rejects_wrong_password(client):
-    response = client.post("/admin/login", json={"email": "admin@test.local", "password": "nope"})
+    response = client.post("/admin/login", json={"email": "admin@mediconnect-demo.com", "password": "nope"})
     assert response.status_code == 401
 
 
